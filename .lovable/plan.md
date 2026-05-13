@@ -1,43 +1,28 @@
-## Landing Page PROLAV
+## Ajustes solicitados
 
-Landing page única, sofisticada e responsiva alinhada ao Brandbook (Royal Navy #1B3A5F, Tech Green #00D9A3, Structure Grey, Light Grey, tipografia Inter).
+### 1. Logomarca (Header e Footer)
 
-### Estrutura (single route `/` com âncoras + rotas auxiliares apenas se necessário)
+- Gerar nova versão da logo PROLAV com **fundo transparente** via imagegen (PNG transparente), salvando em `src/assets/logo-prolav.png` (substitui a atual).
+- Aumentar tamanho no `Header.tsx`: de `h-10` para `h-14 md:h-16`.
+- Aumentar tamanho no `Footer.tsx`: de `h-10` para `h-14`.
 
-1. **Header fixo** — logo PROLAV + menu (Início, Quem Somos, Serviços, Antes/Depois, Depoimentos, Contato) + CTA WhatsApp.
-2. **Hero** — fundo escuro Royal Navy com gradient + glassmorphism card central, headline "Seu sofá novo de novo." + subheadline, CTA "Solicitar orçamento" e "Ver serviços". Imagem placeholder de alta qualidade.
-3. **Quem Somos** — texto institucional + grid de imagens placeholder da equipe/operação, com efeito parallax leve no scroll.
-4. **Serviços** — 3 cards (Sofás & Estofados, Colchões, Tapetes & Carpetes) com ícones Lucide, hover sutil, glass cards.
-5. **Antes & Depois** — carrossel (Embla, já disponível em ui/carousel) com slider comparativo simples (divisor arrastável) entre duas imagens placeholder.
-6. **Depoimentos** — carrossel/grid de 3–4 depoimentos, fade-in ao entrar no viewport.
-7. **Contato** — formulário (nome, email, telefone, mensagem) com validação Zod + toast de sucesso (sem backend, apenas UI). Card glassmorphism. Info de contato placeholder ao lado.
-8. **Footer** — logo, copyright, redes sociais.
-9. **Botão flutuante WhatsApp** — fixo bottom-right, visível em todas as seções.
+### 2. Hero mais legível (`src/components/sections/Hero.tsx` + `styles.css`)
 
-### Interatividade
+Problema atual: título branco sobre gradiente azul claro com blobs translúcidos — baixo contraste, principalmente no mobile (390px).
 
-- **Bolhas seguindo o mouse**: componente global `MouseBubbles` montado no root, gera bolhas SVG/CSS com gradiente azul→verde claro, opacidade baixa, animação de subida e fade. Throttled, desativado em `prefers-reduced-motion` e em telas mobile.
-- **Parallax**: hook `useParallax` baseado em scroll Y aplicado a backgrounds das seções Hero e Quem Somos (translate Y suave).
-- **Glassmorphism**: classe utilitária `.glass` em styles.css usando backdrop-blur + bg semitransparente + border sutil. Aplicado em Hero card, cards de serviço e card de contato.
-- **Animações**: fade-in/scale-in via IntersectionObserver (hook `useInView`).
+Mudanças:
 
-### Design system
+- **Escurecer o fundo do Hero**: ajustar `--gradient-hero` para tons mais profundos de Royal Navy, e adicionar um overlay escuro sutil (`bg-black/30`) atrás do conteúdo.
+- **Reforçar o título**: 
+  - aumentar peso para `font-extrabold`
+  - adicionar `drop-shadow-lg` / text-shadow customizado para destacar do fundo
+  - manter o destaque "novo de novo" no verde Tech Green (accent), mas com glow mais forte
+- **Subtítulo**: subir contraste de `text-white/80` para `text-white/95` e leve text-shadow.
+- **Badge superior**: manter glassmorphism mas com borda accent mais visível.
+- Garantir que blobs decorativos não passem por cima do texto (ajustar `z-index` e opacidade).  
+- Mobile first.
 
-- Atualizar `src/styles.css`: tokens em oklch correspondentes ao Brandbook (primary = Royal Navy, accent = Tech Green, muted = Structure/Light Grey), gradientes (`--gradient-brand`), sombras elegantes, `--glass-bg`, `--glass-border`. Importar Inter via Google Fonts.
-- Logo PROLAV copiado para `src/assets/logo-prolav.png`.
-- Sem custom colors em componentes — apenas tokens semânticos.
+### Fora do escopo
 
-### Arquitetura técnica
-
-- Rota única `src/routes/index.tsx` compondo seções como componentes em `src/components/sections/` (Hero, About, Services, BeforeAfter, Testimonials, Contact, Footer).
-- Componentes compartilhados em `src/components/`: `Header`, `WhatsAppFloat`, `MouseBubbles`, `BeforeAfterSlider`.
-- Hooks em `src/hooks/`: `useParallax`, `useInView`, `usePrefersReducedMotion`.
-- Form com `react-hook-form` + `zod` (já instalados). Submit apenas exibe toast (Sonner).
-- SEO: `head()` com title "PROLAV — Higienização & Estética Premium em Maceió", description, og tags.
-- Responsivo mobile-first, container max-w-7xl, espaçamento generoso.
-
-### Fora de escopo
-
-- Backend / envio real do formulário (placeholder).
-- Imagens reais (placeholders neutros conforme escolhido).
-- Integração WhatsApp real — link `https://wa.me/55XXXXXXXXXXX` com placeholder.
+- Não mexer em outras seções, conteúdo ou estrutura.
+- Sem alterações de backend/lógica.
