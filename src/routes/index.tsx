@@ -1,26 +1,50 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Toaster } from "@/components/ui/sonner";
+import { Header } from "@/components/Header";
+import { MouseBubbles } from "@/components/MouseBubbles";
+import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { Hero } from "@/components/sections/Hero";
+import { About } from "@/components/sections/About";
+import { Services } from "@/components/sections/Services";
+import { BeforeAfter } from "@/components/sections/BeforeAfter";
+import { Testimonials } from "@/components/sections/Testimonials";
+import { Contact } from "@/components/sections/Contact";
+import { Footer } from "@/components/sections/Footer";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "PROLAV — Higienização & Estética Premium em Maceió" },
+      {
+        name: "description",
+        content:
+          "Higienização profissional de sofás, colchões e tapetes em Maceió. Tecnologia premium, equipe especialista e resultado que transforma seu ambiente.",
+      },
+      { property: "og:title", content: "PROLAV — Higienização & Estética Premium" },
+      {
+        property: "og:description",
+        content: "Seu sofá novo de novo. Higienização premium para sua casa ou empresa.",
+      },
+      { property: "og:type", content: "website" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
-
 function Index() {
-  return <PlaceholderIndex />;
+  return (
+    <main className="relative">
+      <MouseBubbles />
+      <Header />
+      <Hero />
+      <About />
+      <Services />
+      <BeforeAfter />
+      <Testimonials />
+      <Contact />
+      <Footer />
+      <WhatsAppFloat />
+      <Toaster richColors position="top-right" />
+    </main>
+  );
 }
