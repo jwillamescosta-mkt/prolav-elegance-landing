@@ -29,8 +29,13 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
-        <a href="#inicio" className="flex items-center gap-2">
-          <img src={logo} alt="PROLAV Higienização & Estética" className="h-14 w-auto md:h-16" />
+        <a href="#inicio" className="flex items-center gap-3">
+          <img
+            src={logo}
+            alt="PROLAV Higienização & Estética"
+            draggable={false}
+            className="h-10 w-auto select-none md:h-12"
+          />
         </a>
         <nav className="hidden items-center gap-7 md:flex">
           {links.map((l) => (
