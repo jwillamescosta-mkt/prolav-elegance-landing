@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-background py-10">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 md:flex-row md:px-8">
-        <img src={logo} alt="PROLAV" className="h-14 w-auto" />
+        <img src={logo} alt="PROLAV" draggable={false} className="h-10 w-auto select-none" />
         <p className="text-xs text-muted-foreground">
           © {new Date().getFullYear()} PROLAV Higienização & Estética. Todos os direitos reservados.
         </p>
