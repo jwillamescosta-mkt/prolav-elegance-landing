@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "PROLAV - Higienização e Estética de Estofados" },
+      { name: "description", content: "PROLAV Elegance Landing is a modern, responsive, and sophisticated landing page for PROLAV." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "PROLAV - Higienização e Estética de Estofados" },
+      { property: "og:description", content: "PROLAV Elegance Landing is a modern, responsive, and sophisticated landing page for PROLAV." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "PROLAV - Higienização e Estética de Estofados" },
+      { name: "twitter:description", content: "PROLAV Elegance Landing is a modern, responsive, and sophisticated landing page for PROLAV." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5b06e759-7ba8-4bd9-a574-8a3d35215114/id-preview-498edd2b--acb73a3c-ecb6-4ba6-b0cc-da202e0c26bc.lovable.app-1779073618187.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/5b06e759-7ba8-4bd9-a574-8a3d35215114/id-preview-498edd2b--acb73a3c-ecb6-4ba6-b0cc-da202e0c26bc.lovable.app-1779073618187.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -94,17 +98,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:shadow-elegant focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-        >
-          Pular para o conteúdo
-        </a>
         {children}
         <Scripts />
       </body>
