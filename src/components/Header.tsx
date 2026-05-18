@@ -11,6 +11,9 @@ const links = [
   { href: "#contato", label: "Contato" },
 ];
 
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -25,25 +28,33 @@ export function Header() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
-        scrolled ? "glass shadow-elegant" : "bg-transparent"
+        scrolled
+          ? "border-b border-border bg-background/95 shadow-card backdrop-blur-md"
+          : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
-        <a href="#inicio" className="flex items-center gap-3">
-          <img
-            src={logo}
-            alt="PROLAV Higienização & Estética"
-            draggable={false}
-            className="h-10 w-auto select-none md:h-12"
-          />
+        <a
+          href="#inicio"
+          aria-label="PROLAV — ir para o início"
+          className={`flex items-center rounded-2xl ${focusRing}`}
+        >
+          <span className="flex items-center rounded-2xl bg-white px-3 py-1.5 shadow-card ring-1 ring-black/5">
+            <img
+              src={logo}
+              alt="PROLAV Higienização & Estética"
+              draggable={false}
+              className="h-11 w-auto select-none md:h-14"
+            />
+          </span>
         </a>
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className={`text-sm font-medium transition-colors ${
-                scrolled ? "text-foreground hover:text-primary" : "text-white/90 hover:text-white"
+              className={`rounded-md px-1 py-1 text-sm font-medium transition-colors ${focusRing} ${
+                scrolled ? "text-foreground hover:text-primary" : "text-white hover:text-accent-glow"
               }`}
             >
               {l.label}
@@ -54,27 +65,32 @@ export function Header() {
           href="https://wa.me/5582000000000"
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground shadow-elegant transition-transform hover:scale-105 md:inline-flex"
+          className={`hidden min-h-11 items-center rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground shadow-elegant transition-transform hover:scale-105 md:inline-flex ${focusRing}`}
         >
           Solicitar orçamento
         </a>
         <button
-          aria-label="Abrir menu"
+          type="button"
+          aria-label={open ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
-          className={`md:hidden ${scrolled ? "text-foreground" : "text-white"}`}
+          className={`flex h-11 w-11 items-center justify-center rounded-md md:hidden ${focusRing} ${
+            scrolled ? "text-foreground" : "text-white"
+          }`}
         >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {open ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
         </button>
       </div>
       {open && (
-        <div className="glass mx-4 mb-3 rounded-2xl p-4 md:hidden">
-          <nav className="flex flex-col gap-3">
+        <div id="mobile-menu" className="mx-4 mb-3 rounded-2xl border border-border bg-background p-4 shadow-card md:hidden">
+          <nav aria-label="Menu mobile" className="flex flex-col gap-1">
             {links.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="text-sm font-medium text-foreground"
+                className={`rounded-md px-2 py-3 text-sm font-medium text-foreground hover:bg-secondary ${focusRing}`}
               >
                 {l.label}
               </a>
@@ -83,7 +99,7 @@ export function Header() {
               href="https://wa.me/5582000000000"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 rounded-full bg-accent px-4 py-2 text-center text-sm font-semibold text-accent-foreground"
+              className={`mt-2 inline-flex min-h-11 items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground ${focusRing}`}
             >
               Solicitar orçamento
             </a>
