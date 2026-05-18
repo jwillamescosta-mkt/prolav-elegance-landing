@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="relative">
+    <main id="main" className="relative">
       <MouseBubbles />
       <Header />
       <Hero />

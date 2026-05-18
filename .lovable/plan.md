@@ -1,68 +1,69 @@
+# Header: visibilidade da logo + Acessibilidade WCAG AA
 
-# Logo oficial PROLAV + Design System
+## Problema observado
+Nas screenshots: ao rolar, o header fica com fundo "glass" claro e a logo PROLAV (azul-marinho + verde sobre transparente) perde contraste — o "P" e o tagline somem contra o gradiente translúcido. No topo (hero escuro), a logo é legível mas pequena.
 
-## 1. Logo oficial (asset)
+## Mudanças no Header (`src/components/Header.tsx`)
 
-A imagem enviada (`user-uploads://ProLav.png`) é a versão oficial: símbolo "P" navy + curva verde com gota azul, ao lado do wordmark "PROLAV" (PRO navy / LAV verde) com tagline "Higienização & Estética".
+1. **Aumentar logo**: `h-10 md:h-12` → `h-12 md:h-14` (subtle, sem quebrar layout).
+2. **Container com contraste sempre garantido**:
+   - Envolver o `<img>` em um "badge" arredondado com fundo branco sólido + leve sombra: `bg-white rounded-xl px-3 py-1.5 shadow-card`.
+   - Aplicar em ambos os estados (topo e scrolled) — fica como uma "placa" da marca, profissional e sempre legível tanto sobre o hero escuro quanto sobre o glass.
+   - Padding interno respeita a área de respiro da logo.
+3. **Estado scrolled**: trocar `glass` (muito translúcido) por `bg-background/95 backdrop-blur-md border-b border-border` — fundo quase sólido, melhor contraste para nav links e logo.
+4. **Nav links no topo (hero)**: o branco atual `text-white/90` está OK (>4.5:1 sobre navy). Manter, mas garantir `focus-visible:ring-2 ring-accent ring-offset-2` em todos os links e botões.
 
-Ações:
-- Copiar para `src/assets/logo-prolav.png` (substitui o asset atual gerado por IA). Mantém todos os imports existentes (`@/assets/logo-prolav.png`) — zero refactor em `Header.tsx`/`Footer.tsx`.
-- Criar também `src/assets/logo-prolav-mark.png` (somente o símbolo "P", recortado via PIL a partir do oficial) para usos compactos: favicon, WhatsApp float, mobile muito estreito, OG image quadrada.
-- Copiar `public/favicon.png` a partir do mark, e referenciar no `__root.tsx` head.
-- Validar com PIL: ambos RGBA, alpha=0 nos cantos, dimensões adequadas (logo full ~1920px largura, mark ~512×512).
+## Acessibilidade WCAG 2.1 AA — varredura global
 
-Não será criada versão monocromática (decisão anterior do usuário). Sobre fundo escuro do Hero, a logo oficial colorida funciona porque o símbolo tem verde brilhante e o wordmark será trocado por uma variante com wordmark branco **apenas se necessário** — proposta: por padrão usamos a oficial em todos os contextos; se o "PRO" navy ficar pouco legível no Hero (não há logo no Hero hoje, só no Header sobre gradient), avaliamos.
+### Header / Navegação
+- `<header>` já é landmark; adicionar `<nav aria-label="Principal">` no desktop e `aria-label="Menu mobile"` no mobile.
+- Botão hamburger: adicionar `aria-expanded={open}` e `aria-controls="mobile-menu"`; o painel mobile recebe `id="mobile-menu"`.
+- Adicionar **skip link** ("Pular para o conteúdo") no topo de `__root.tsx`, visível só com foco, indo para `#main`.
 
-## 2. Design System — tokens em `src/styles.css`
+### Landmarks & estrutura
+- `routes/index.tsx`: o `<main>` deve ter `id="main"` e ser único (já é).
+- Cada `<section>` recebe `aria-labelledby` apontando para o H2 da seção.
+- Garantir hierarquia de headings: 1× H1 (Hero), H2 por seção, H3 dentro.
 
-Hoje os tokens já existem mas estão dispersos. Vou consolidar e documentar uma paleta extraída diretamente da logo oficial, mais escalas de tipografia, espaçamento, raios, sombras, gradientes e animações.
+### Contraste de cores (token review em `src/styles.css`)
+- Verificar `--muted-foreground` (`oklch(0.52 0.03 255)` ≈ #5A6A7E) sobre `--background` branco: ~4.6:1 ✅ AA para texto normal. Manter.
+- Texto branco sobre overlay do Hero: o `bg-black/30` atual pode não bastar em alguns gradientes. Aumentar para `bg-black/45` ou adicionar `text-shadow` já existente — validar com checker.
+- Botão `bg-accent` (verde #1FCE8F) com `text-accent-foreground` (navy escuro): ~7:1 ✅.
+- Badge "Higienização Premium em Maceió": texto branco sobre `glass-dark` (navy translúcido) — OK.
 
-### 2.1 Cores da marca (extraídas da logo)
-- **Navy** `#152C5B` → `--brand-navy` (primary)
-- **Green** `#1FCE8F` → `--brand-green` (accent)
-- **Drop Blue** `#3FA9F5` → `--brand-blue` (highlight/detalhes)
-- **Slate** `#5A6A7E` → `--brand-slate` (tagline / muted-foreground)
+### Componentes interativos
+- Todos os `<a>`/`<button>` ganham `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`.
+- `WhatsAppFloat`: confirmar `aria-label="Falar no WhatsApp"` e tamanho mínimo 44×44px.
+- Ícone-only buttons (Instagram/Facebook no Footer, menu mobile): já têm `aria-label` — auditar todos.
+- `MouseBubbles`: marcar container com `aria-hidden="true"` e `pointer-events-none` (decorativo).
 
-Todas re-expressas em `oklch()` e mapeadas para os tokens semânticos já existentes (`--primary`, `--accent`, `--primary-glow`, `--muted-foreground`, etc.), mais escalas `-50…-900` para cada cor da marca.
+### Imagens
+- `alt` descritivos em todas as `<img>`. Imagens puramente decorativas (blobs, bolhas) → `aria-hidden="true"` ou via CSS background.
+- Logo no Header: `alt="PROLAV — Higienização & Estética"` (já está).
 
-### 2.2 Gradientes
-- `--gradient-brand`: navy → blue → green (diagonal 135°)
-- `--gradient-hero`: navy profundo com glow verde + azul (mantém Hero atual, recalibrado para as cores oficiais)
-- `--gradient-soft`: white → navy-50
-- `--gradient-accent`: green → blue (CTAs secundários)
+### Formulário (Contact)
+- Cada `<Input>`/`<Textarea>` com `<Label htmlFor>` associado.
+- Mensagens de erro com `aria-describedby` e `role="alert"`.
+- `aria-required="true"` em campos obrigatórios.
 
-### 2.3 Tipografia
-- Manter Inter como fonte principal.
-- Escala de display tokenizada via `@theme`: `--text-display-1` (clamp 3rem–5rem), `--text-display-2`, `--text-h1…h4`, `--text-body`, `--text-caption`.
-- Pesos: 400 / 500 / 600 / 700 / 800.
-- Tracking e leading definidos por nível.
+### Motion & preferências do usuário
+- Adicionar bloco global em `styles.css`:
+  ```css
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+  ```
+- `useParallax` já respeita `prefers-reduced-motion` ✅.
 
-### 2.4 Espaçamento, raio, sombras
-- Raios: `--radius` 0.875rem (mantém), mais `--radius-pill` 9999px.
-- Sombras: `--shadow-elegant`, `--shadow-glow`, `--shadow-card`, `--shadow-card-hover`.
-- Escala de seção: `--section-py` (clamp 4rem–8rem) e container `--container-px`.
+### Idioma & meta
+- `__root.tsx`: confirmar `<html lang="pt-BR">`.
+- Garantir `<title>` único por rota (já está em `index.tsx`).
 
-### 2.5 Glass / efeitos
-- Manter `.glass` e `.glass-dark` com tokens recalibrados para as cores oficiais.
+### Tap targets (mobile)
+- Botões/links principais ≥ 44×44px. Ajustar `px-7 py-3.5` está OK; auditar ícones do Footer (`h-9 w-9` → `h-11 w-11` ou `min-h-11 min-w-11`).
 
-### 2.6 Motion
-- Keyframes existentes (`fade-in-up`, `float`, `bubble-rise`) ficam.
-- Adicionar `--ease-brand: cubic-bezier(0.22, 1, 0.36, 1)` e `--duration-base: 600ms` para padronizar.
+## Fora de escopo
+- Refatorar layouts/seções, mudar copy, alterar paleta da marca, criar versão monocromática da logo, alterar navegação (manter âncoras hash atuais).
 
-## 3. Aplicação consistente
-
-- `Header.tsx`: logo oficial, `h-10 md:h-12`, `gap-3`, `select-none`, `draggable={false}` (já está assim — só troca o asset).
-- `Footer.tsx`: idem, `h-10`.
-- `WhatsAppFloat.tsx`: continua com ícone de WhatsApp (não usa logo).
-- Favicon: novo, derivado do mark.
-- Meta `og:image`: usar versão oficial (1200×630, fundo navy claro) — gerada via PIL a partir do logo oficial.
-
-## 4. Fora de escopo
-- Refazer layout das seções (Hero, About, Services, etc.) — apenas se algum token mudar tanto que quebre o visual, faço o ajuste mínimo correspondente.
-- Versão branca monocromática da logo.
-- Mudanças de copy ou estrutura de navegação.
-
-## Detalhes técnicos
-- `src/styles.css` será reorganizado em blocos comentados: `/* === Brand Palette === */`, `/* === Semantic Tokens === */`, `/* === Gradients === */`, `/* === Typography Scale === */`, `/* === Motion === */`, `/* === Utilities === */`.
-- Conversão hex→oklch feita com `culori`/cálculo manual; valores fixados como literais oklch no CSS (sem dependência runtime).
-- QA: após aplicar, abrir o preview em `/` e validar Header (logo nítida sobre gradient), Footer (logo nítida sobre branco) e responsivo mobile.
+## Validação
+Após implementar: screenshot do header no topo e após scroll (desktop + mobile 375px) para confirmar contraste da logo, e checagem visual de focus rings em tab navigation.

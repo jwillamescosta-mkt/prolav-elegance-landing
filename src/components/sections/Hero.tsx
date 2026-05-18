@@ -5,12 +5,16 @@ export function Hero() {
   const blobRef = useParallax<HTMLDivElement>(0.15);
 
   return (
-    <section id="inicio" className="relative min-h-screen overflow-hidden gradient-hero">
-      <div ref={blobRef} className="pointer-events-none absolute inset-0 z-0">
+    <section
+      id="inicio"
+      aria-labelledby="hero-heading"
+      className="relative min-h-screen overflow-hidden gradient-hero"
+    >
+      <div ref={blobRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-accent/10 blur-3xl animate-float" />
         <div className="absolute right-0 top-1/2 h-[28rem] w-[28rem] rounded-full bg-primary-glow/15 blur-3xl" />
       </div>
-      <div className="pointer-events-none absolute inset-0 z-0 bg-black/30" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-black/45" />
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 pt-28 pb-16 text-center md:px-8">
         <div className="glass-dark inline-flex items-center gap-2 rounded-full border border-accent/40 px-4 py-1.5 text-xs font-medium text-white animate-fade-in-up">
@@ -19,6 +23,7 @@ export function Hero() {
         </div>
 
         <h1
+          id="hero-heading"
           className="mt-6 max-w-4xl text-balance text-4xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl animate-fade-in-up"
           style={{ textShadow: "0 2px 24px rgba(0,0,0,0.45)" }}
         >

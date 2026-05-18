@@ -23,11 +23,11 @@ export function Testimonials() {
   const { ref, inView } = useInView<HTMLDivElement>();
 
   return (
-    <section id="depoimentos" className="relative overflow-hidden bg-background py-24 md:py-32">
+    <section id="depoimentos" aria-labelledby="depoimentos-heading" className="relative overflow-hidden bg-background py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Depoimentos</span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 id="depoimentos-heading" className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             Quem confia, recomenda
           </h2>
         </div>

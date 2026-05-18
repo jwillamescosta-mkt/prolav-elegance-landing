@@ -11,7 +11,7 @@ export function About() {
   const { ref, inView } = useInView<HTMLDivElement>();
 
   return (
-    <section id="quem-somos" className="relative gradient-soft py-24 md:py-32">
+    <section id="quem-somos" aria-labelledby="quem-somos-heading" className="relative gradient-soft py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div
           ref={ref}
@@ -19,7 +19,7 @@ export function About() {
         >
           <div>
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Quem Somos</span>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+            <h2 id="quem-somos-heading" className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
               Especialistas em transformar ambientes
             </h2>
             <p className="mt-6 text-base leading-relaxed text-muted-foreground md:text-lg">

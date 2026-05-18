@@ -23,14 +23,14 @@ export function Services() {
   const { ref, inView } = useInView<HTMLDivElement>();
 
   return (
-    <section id="servicos" className="relative overflow-hidden bg-background py-24 md:py-32">
-      <div className="pointer-events-none absolute inset-0">
+    <section id="servicos" aria-labelledby="servicos-heading" className="relative overflow-hidden bg-background py-24 md:py-32">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
       </div>
       <div className="relative mx-auto max-w-7xl px-4 md:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Serviços</span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 id="servicos-heading" className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             Cuidado especializado para cada superfície
           </h2>
           <p className="mt-4 text-base text-muted-foreground md:text-lg">
