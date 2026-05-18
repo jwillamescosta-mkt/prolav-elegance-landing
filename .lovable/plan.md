@@ -1,29 +1,68 @@
-# Aplicação profissional da logomarca
 
-## Diagnóstico
+# Logo oficial PROLAV + Design System
 
-O arquivo `src/assets/logo-prolav.png` está salvo como **RGB sem canal alpha** (1264×848). Ou seja: o "fundo" branco/claro que aparece atrás da logo **faz parte da imagem** — não é um efeito do Header. Por isso a logo aparece como um retângulo colado sobre o Hero escuro e sobre o footer claro, com aspecto pouco profissional.
+## 1. Logo oficial (asset)
 
-A solução não é CSS — é substituir o asset por um PNG real com transparência (RGBA) e ajustar o enquadramento para que a marca tenha respiro consistente.
+A imagem enviada (`user-uploads://ProLav.png`) é a versão oficial: símbolo "P" navy + curva verde com gota azul, ao lado do wordmark "PROLAV" (PRO navy / LAV verde) com tagline "Higienização & Estética".
 
-## O que será feito
+Ações:
+- Copiar para `src/assets/logo-prolav.png` (substitui o asset atual gerado por IA). Mantém todos os imports existentes (`@/assets/logo-prolav.png`) — zero refactor em `Header.tsx`/`Footer.tsx`.
+- Criar também `src/assets/logo-prolav-mark.png` (somente o símbolo "P", recortado via PIL a partir do oficial) para usos compactos: favicon, WhatsApp float, mobile muito estreito, OG image quadrada.
+- Copiar `public/favicon.png` a partir do mark, e referenciar no `__root.tsx` head.
+- Validar com PIL: ambos RGBA, alpha=0 nos cantos, dimensões adequadas (logo full ~1920px largura, mark ~512×512).
 
-1. **Gerar nova logomarca em PNG transparente (RGBA)**
-   - Reaproveitar a logo atual como referência via `imagegen--edit_image`, removendo qualquer fundo e exportando em PNG transparente.
-   - Enquadramento apertado em volta do símbolo + wordmark, com pequena margem uniforme (sem áreas mortas que aumentem a "caixa" visual).
-   - Salvar em `src/assets/logo-prolav.png` (mesmo caminho — sem mudanças de import).
-   - Validar via Python/PIL que o arquivo é `RGBA` e que os cantos têm alpha = 0.
+Não será criada versão monocromática (decisão anterior do usuário). Sobre fundo escuro do Hero, a logo oficial colorida funciona porque o símbolo tem verde brilhante e o wordmark será trocado por uma variante com wordmark branco **apenas se necessário** — proposta: por padrão usamos a oficial em todos os contextos; se o "PRO" navy ficar pouco legível no Hero (não há logo no Hero hoje, só no Header sobre gradient), avaliamos.
 
-2. **Refinos finos de aplicação (Header e Footer)**
-   - `Header.tsx`: trocar `gap-2` por `gap-3`, manter `h-14 md:h-16`, e adicionar `select-none` + `draggable={false}` na `<img>` para tratamento mais profissional.
-   - `Footer.tsx`: manter `h-14`, adicionar `select-none` e alinhar verticalmente com o texto.
-   - Nenhuma alteração de cor, gradiente, layout de seções ou conteúdo.
+## 2. Design System — tokens em `src/styles.css`
 
-3. **QA visual**
-   - Verificar a logo isolada (nova versão) em fundo escuro e em fundo claro para confirmar que não há halo, borda branca ou retângulo residual.
+Hoje os tokens já existem mas estão dispersos. Vou consolidar e documentar uma paleta extraída diretamente da logo oficial, mais escalas de tipografia, espaçamento, raios, sombras, gradientes e animações.
 
-## Fora de escopo
+### 2.1 Cores da marca (extraídas da logo)
+- **Navy** `#152C5B` → `--brand-navy` (primary)
+- **Green** `#1FCE8F` → `--brand-green` (accent)
+- **Drop Blue** `#3FA9F5` → `--brand-blue` (highlight/detalhes)
+- **Slate** `#5A6A7E` → `--brand-slate` (tagline / muted-foreground)
 
-- Criar versão monocromática branca (usuário recusou).
-- Alterar Hero, cores da marca, tipografia ou demais seções.
-- Mudar a estrutura de navegação / rotas.
+Todas re-expressas em `oklch()` e mapeadas para os tokens semânticos já existentes (`--primary`, `--accent`, `--primary-glow`, `--muted-foreground`, etc.), mais escalas `-50…-900` para cada cor da marca.
+
+### 2.2 Gradientes
+- `--gradient-brand`: navy → blue → green (diagonal 135°)
+- `--gradient-hero`: navy profundo com glow verde + azul (mantém Hero atual, recalibrado para as cores oficiais)
+- `--gradient-soft`: white → navy-50
+- `--gradient-accent`: green → blue (CTAs secundários)
+
+### 2.3 Tipografia
+- Manter Inter como fonte principal.
+- Escala de display tokenizada via `@theme`: `--text-display-1` (clamp 3rem–5rem), `--text-display-2`, `--text-h1…h4`, `--text-body`, `--text-caption`.
+- Pesos: 400 / 500 / 600 / 700 / 800.
+- Tracking e leading definidos por nível.
+
+### 2.4 Espaçamento, raio, sombras
+- Raios: `--radius` 0.875rem (mantém), mais `--radius-pill` 9999px.
+- Sombras: `--shadow-elegant`, `--shadow-glow`, `--shadow-card`, `--shadow-card-hover`.
+- Escala de seção: `--section-py` (clamp 4rem–8rem) e container `--container-px`.
+
+### 2.5 Glass / efeitos
+- Manter `.glass` e `.glass-dark` com tokens recalibrados para as cores oficiais.
+
+### 2.6 Motion
+- Keyframes existentes (`fade-in-up`, `float`, `bubble-rise`) ficam.
+- Adicionar `--ease-brand: cubic-bezier(0.22, 1, 0.36, 1)` e `--duration-base: 600ms` para padronizar.
+
+## 3. Aplicação consistente
+
+- `Header.tsx`: logo oficial, `h-10 md:h-12`, `gap-3`, `select-none`, `draggable={false}` (já está assim — só troca o asset).
+- `Footer.tsx`: idem, `h-10`.
+- `WhatsAppFloat.tsx`: continua com ícone de WhatsApp (não usa logo).
+- Favicon: novo, derivado do mark.
+- Meta `og:image`: usar versão oficial (1200×630, fundo navy claro) — gerada via PIL a partir do logo oficial.
+
+## 4. Fora de escopo
+- Refazer layout das seções (Hero, About, Services, etc.) — apenas se algum token mudar tanto que quebre o visual, faço o ajuste mínimo correspondente.
+- Versão branca monocromática da logo.
+- Mudanças de copy ou estrutura de navegação.
+
+## Detalhes técnicos
+- `src/styles.css` será reorganizado em blocos comentados: `/* === Brand Palette === */`, `/* === Semantic Tokens === */`, `/* === Gradients === */`, `/* === Typography Scale === */`, `/* === Motion === */`, `/* === Utilities === */`.
+- Conversão hex→oklch feita com `culori`/cálculo manual; valores fixados como literais oklch no CSS (sem dependência runtime).
+- QA: após aplicar, abrir o preview em `/` e validar Header (logo nítida sobre gradient), Footer (logo nítida sobre branco) e responsivo mobile.
