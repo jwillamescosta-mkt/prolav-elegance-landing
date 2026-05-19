@@ -6,7 +6,9 @@ import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Services } from "@/components/sections/Services";
+import { WaterproofDemo } from "@/components/sections/WaterproofDemo";
 import { BeforeAfter } from "@/components/sections/BeforeAfter";
+import { Videos } from "@/components/sections/Videos";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
@@ -39,7 +41,9 @@ function Index() {
       <Hero />
       <About />
       <Services />
+      <WaterproofDemo />
       <BeforeAfter />
+      <Videos />
       <Testimonials />
       <Contact />
       <Footer />
