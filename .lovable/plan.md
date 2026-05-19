@@ -1,69 +1,107 @@
-# Header: visibilidade da logo + Acessibilidade WCAG AA
+## Objetivo
 
-## Problema observado
-Nas screenshots: ao rolar, o header fica com fundo "glass" claro e a logo PROLAV (azul-marinho + verde sobre transparente) perde contraste — o "P" e o tagline somem contra o gradiente translúcido. No topo (hero escuro), a logo é legível mas pequena.
+Adicionar duas novas seções de mídia à landing page e modernizar a seção de depoimentos com carrossel deslizante automático.
 
-## Mudanças no Header (`src/components/Header.tsx`)
+---
 
-1. **Aumentar logo**: `h-10 md:h-12` → `h-12 md:h-14` (subtle, sem quebrar layout).
-2. **Container com contraste sempre garantido**:
-   - Envolver o `<img>` em um "badge" arredondado com fundo branco sólido + leve sombra: `bg-white rounded-xl px-3 py-1.5 shadow-card`.
-   - Aplicar em ambos os estados (topo e scrolled) — fica como uma "placa" da marca, profissional e sempre legível tanto sobre o hero escuro quanto sobre o glass.
-   - Padding interno respeita a área de respiro da logo.
-3. **Estado scrolled**: trocar `glass` (muito translúcido) por `bg-background/95 backdrop-blur-md border-b border-border` — fundo quase sólido, melhor contraste para nav links e logo.
-4. **Nav links no topo (hero)**: o branco atual `text-white/90` está OK (>4.5:1 sobre navy). Manter, mas garantir `focus-visible:ring-2 ring-accent ring-offset-2` em todos os links e botões.
+## 1. Nova seção: Vídeos (`Videos.tsx`)
 
-## Acessibilidade WCAG 2.1 AA — varredura global
+**Posição na página:** entre `BeforeAfter` e `Testimonials` — fluxo natural: resultado estático → resultado em movimento → prova social.
 
-### Header / Navegação
-- `<header>` já é landmark; adicionar `<nav aria-label="Principal">` no desktop e `aria-label="Menu mobile"` no mobile.
-- Botão hamburger: adicionar `aria-expanded={open}` e `aria-controls="mobile-menu"`; o painel mobile recebe `id="mobile-menu"`.
-- Adicionar **skip link** ("Pular para o conteúdo") no topo de `__root.tsx`, visível só com foco, indo para `#main`.
-
-### Landmarks & estrutura
-- `routes/index.tsx`: o `<main>` deve ter `id="main"` e ser único (já é).
-- Cada `<section>` recebe `aria-labelledby` apontando para o H2 da seção.
-- Garantir hierarquia de headings: 1× H1 (Hero), H2 por seção, H3 dentro.
-
-### Contraste de cores (token review em `src/styles.css`)
-- Verificar `--muted-foreground` (`oklch(0.52 0.03 255)` ≈ #5A6A7E) sobre `--background` branco: ~4.6:1 ✅ AA para texto normal. Manter.
-- Texto branco sobre overlay do Hero: o `bg-black/30` atual pode não bastar em alguns gradientes. Aumentar para `bg-black/45` ou adicionar `text-shadow` já existente — validar com checker.
-- Botão `bg-accent` (verde #1FCE8F) com `text-accent-foreground` (navy escuro): ~7:1 ✅.
-- Badge "Higienização Premium em Maceió": texto branco sobre `glass-dark` (navy translúcido) — OK.
-
-### Componentes interativos
-- Todos os `<a>`/`<button>` ganham `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background`.
-- `WhatsAppFloat`: confirmar `aria-label="Falar no WhatsApp"` e tamanho mínimo 44×44px.
-- Ícone-only buttons (Instagram/Facebook no Footer, menu mobile): já têm `aria-label` — auditar todos.
-- `MouseBubbles`: marcar container com `aria-hidden="true"` e `pointer-events-none` (decorativo).
-
-### Imagens
-- `alt` descritivos em todas as `<img>`. Imagens puramente decorativas (blobs, bolhas) → `aria-hidden="true"` ou via CSS background.
-- Logo no Header: `alt="PROLAV — Higienização & Estética"` (já está).
-
-### Formulário (Contact)
-- Cada `<Input>`/`<Textarea>` com `<Label htmlFor>` associado.
-- Mensagens de erro com `aria-describedby` e `role="alert"`.
-- `aria-required="true"` em campos obrigatórios.
-
-### Motion & preferências do usuário
-- Adicionar bloco global em `styles.css`:
-  ```css
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
+**Estrutura:**
+- Eyebrow "Em movimento" + título "Veja a PROLAV em ação" + subtítulo curto.
+- Grid responsivo de **3 cards de vídeo** (1 col mobile, 2 col tablet, 3 col desktop).
+- Cada card: `AspectRatio 16:9`, borda arredondada `rounded-3xl`, `shadow-card` → `shadow-card-hover` no hover, leve `-translate-y-1`.
+- Placeholder com play icon centralizado e gradiente `gradient-brand` enquanto o vídeo não é fornecido.
+- Componente `<VideoEmbed src="" title="" />` preparado para receber:
+  - YouTube/Vimeo (iframe responsivo com `loading="lazy"`, `allowfullscreen`, `title` descritivo).
+  - MP4 self-hosted (tag `<video>` com `controls`, `preload="metadata"`, `poster`).
+- Detecção automática do tipo via regex no `src` (youtube.com, youtu.be, vimeo.com → iframe; resto → `<video>`).
+- Array `videos` no topo do arquivo, fácil de editar quando o usuário enviar os links:
+  ```ts
+  const videos = [
+    { src: "", title: "Higienização de sofá", description: "..." },
+    { src: "", title: "Impermeabilização", description: "..." },
+    { src: "", title: "Equipe em campo", description: "..." },
+  ];
   ```
-- `useParallax` já respeita `prefers-reduced-motion` ✅.
 
-### Idioma & meta
-- `__root.tsx`: confirmar `<html lang="pt-BR">`.
-- Garantir `<title>` único por rota (já está em `index.tsx`).
+**Acessibilidade:** `aria-labelledby`, `title` em iframes, `<track>` legenda opcional, foco visível nos cards.
 
-### Tap targets (mobile)
-- Botões/links principais ≥ 44×44px. Ajustar `px-7 py-3.5` está OK; auditar ícones do Footer (`h-9 w-9` → `h-11 w-11` ou `min-h-11 min-w-11`).
+---
+
+## 2. Nova seção: Demo de Impermeabilização (`WaterproofDemo.tsx`)
+
+**Posição:** logo após `Services` (ilustra visualmente o serviço que mais beneficia de prova animada).
+
+**Layout split (2 colunas em desktop, empilhado mobile):**
+- **Esquerda:** título "Impermeabilização que você vê funcionar", parágrafo explicando o teste da gota d'água, bullets curtos (repele líquidos, protege tecidos, secagem rápida), CTA secundário para WhatsApp.
+- **Direita:** card `rounded-3xl shadow-elegant` com `AspectRatio 9:16` ou `1:1` segurando o GIF/vídeo curto:
+  - Componente `<WaterproofMedia src="" />` que aceita `.gif`, `.webp` animado ou `.mp4` (auto-detecta extensão).
+  - Para MP4: `<video autoplay muted loop playsinline>` (essencial para autoplay mobile).
+  - Para GIF/WEBP: `<img>` com `loading="lazy"`.
+  - Badge flutuante "Resultado real" sobre o canto com `glass` + accent.
+  - Placeholder com gradiente animado + ícone de gota d'água enquanto o asset não é fornecido.
+
+**Acessibilidade:** `alt` descritivo, `prefers-reduced-motion` desativa autoplay e mostra poster estático.
+
+---
+
+## 3. Refactor: Depoimentos com carrossel deslizante (`Testimonials.tsx`)
+
+**Mudanças:**
+- Mover array `testimonials` para arquivo dedicado `src/data/testimonials.ts` para facilitar adição futura (cada item: `name, role, quote, rating, avatar?`).
+- Aumentar para 6 depoimentos iniciais (mantendo os 3 atuais + 3 novos plausíveis no mesmo tom).
+- Substituir grid estático por **Embla Carousel** (já instalado, usado em `BeforeAfter`) com plugin **autoplay**:
+  - `bun add embla-carousel-autoplay`
+  - `loop: true`, `align: "start"`, `dragFree: true`
+  - Plugin Autoplay: `delay: 4000ms`, `stopOnInteraction: false`, `stopOnMouseEnter: true`.
+- Slides responsivos: 1 card mobile, 2 tablet, 3 desktop (via `basis-full md:basis-1/2 lg:basis-1/3`).
+- Animação moderna:
+  - Transição suave com `ease-brand` cubic-bezier já no design system.
+  - Cards inativos com `opacity-60 scale-95` e card ativo `opacity-100 scale-100` usando `api.on("select")` para tracking do índice.
+  - Hover em card: `-translate-y-2` + `shadow-card-hover`.
+- Indicadores de progresso (dots) abaixo do carrossel, clicáveis, com estado ativo em `bg-accent`.
+- Setas `CarouselPrevious/Next` reposicionadas (visíveis no desktop, ocultas no mobile — gesto de arrastar).
+- Respeitar `prefers-reduced-motion`: desabilita autoplay automaticamente.
+
+**Acessibilidade:**
+- `aria-roledescription="carousel"` já vem do componente Carousel.
+- `aria-live="polite"` no container de slides.
+- Botão "Pausar/Reproduzir" autoplay com `aria-pressed`.
+- Foco visível nos dots e setas.
+
+---
+
+## 4. Integração final
+
+- `src/routes/index.tsx`: importar e posicionar:
+  ```
+  Hero → About → Services → WaterproofDemo → BeforeAfter → Videos → Testimonials → Contact → Footer
+  ```
+- Adicionar links no `Header.tsx` se desejado (a confirmar — atualmente não há link para Antes/Depois; manter consistência).
+
+---
 
 ## Fora de escopo
-- Refatorar layouts/seções, mudar copy, alterar paleta da marca, criar versão monocromática da logo, alterar navegação (manter âncoras hash atuais).
 
-## Validação
-Após implementar: screenshot do header no topo e após scroll (desktop + mobile 375px) para confirmar contraste da logo, e checagem visual de focus rings em tab navigation.
+- Não vou inserir URLs de vídeos reais (aguardando do usuário).
+- Não vou gerar/criar o GIF de impermeabilização (aguardando asset do usuário).
+- Sem alteração de paleta, copy das outras seções, ou refactor de layouts existentes.
+- Sem versão monocromática da logo.
+
+---
+
+## Arquivos a criar/editar
+
+**Criar:**
+- `src/components/sections/Videos.tsx`
+- `src/components/sections/WaterproofDemo.tsx`
+- `src/components/VideoEmbed.tsx`
+- `src/components/WaterproofMedia.tsx`
+- `src/data/testimonials.ts`
+
+**Editar:**
+- `src/components/sections/Testimonials.tsx` (refactor para carrossel)
+- `src/routes/index.tsx` (ordem das seções)
+- `package.json` (add `embla-carousel-autoplay`)
