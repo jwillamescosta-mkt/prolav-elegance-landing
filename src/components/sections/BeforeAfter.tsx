@@ -9,11 +9,11 @@ const items = [
 
 export function BeforeAfter() {
   return (
-    <section id="antes-depois" className="relative bg-secondary py-24 md:py-32">
+    <section id="antes-depois" aria-labelledby="antes-depois-heading" className="relative bg-secondary py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Resultados</span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
+          <h2 id="antes-depois-heading" className="mt-3 text-3xl font-bold tracking-tight text-foreground md:text-5xl">
             Antes & Depois
           </h2>
           <p className="mt-4 text-base text-muted-foreground md:text-lg">
